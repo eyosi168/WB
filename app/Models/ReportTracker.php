@@ -1,18 +1,16 @@
 <?php
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
 
-class ReportMessage extends Model
+class ReportTracker extends Model
 {
-    // Removed user_id!
-    protected $fillable = ['report_id', 'sender_type', 'message'];
+    protected $fillable = ['report_id', 'tracking_id', 'passcode'];
 
     protected function casts(): array
     {
         return [
-            'message' => 'encrypted',
+            'passcode' => 'hashed', // Magic: Auto-hashes the PIN
         ];
     }
 

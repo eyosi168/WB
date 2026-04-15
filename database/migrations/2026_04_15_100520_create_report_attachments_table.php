@@ -13,16 +13,10 @@ return new class extends Migration
     {
         Schema::create('report_attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->constrained()->onDelete('cascade');
-        
-        // The path where the file is stored in MinIO (e.g., "reports/1/evidence.pdf")
-        $table->string('file_path');
-        
-        // Original name of the file (e.g., "secret_document.pdf")
-        $table->string('file_name');
-        
-        // Type of file (image/png, application/pdf, etc.)
-        $table->string('mime_type')->nullable();
+            $table->foreignId('report_id')->constrained()->cascadeOnDelete();
+    $table->string('file_path');
+    $table->string('file_name');
+    $table->string('mime_type')->nullable();
             $table->timestamps();
         });
     }

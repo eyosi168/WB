@@ -12,10 +12,6 @@ class ReportForm
     {
         return $schema
             ->components([
-                TextInput::make('tracking_id')
-                    ->required(),
-                TextInput::make('passcode')
-                    ->required(),
                 TextInput::make('bureau_id')
                     ->required()
                     ->numeric(),
@@ -30,7 +26,7 @@ class ReportForm
                     ->default('pending'),
                 TextInput::make('priority')
                     ->required()
-                    ->default('medium'),
+                    ->default('normal'),
             ]);
     }
 }

@@ -11,8 +11,6 @@ class ReportInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('tracking_id'),
-                TextEntry::make('passcode'),
                 TextEntry::make('bureau_id')
                     ->numeric(),
                 TextEntry::make('category_id')

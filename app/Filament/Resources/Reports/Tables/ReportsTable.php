@@ -15,10 +15,6 @@ class ReportsTable
     {
         return $table
             ->columns([
-                TextColumn::make('tracking_id')
-                    ->searchable(),
-                TextColumn::make('passcode')
-                    ->searchable(),
                 TextColumn::make('bureau_id')
                     ->numeric()
                     ->sortable(),

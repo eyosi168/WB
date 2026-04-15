@@ -12,4 +12,8 @@ class Bureau extends Model
     {
         return $this->hasMany(Report::class);
     }
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }

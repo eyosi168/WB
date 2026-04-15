@@ -13,16 +13,11 @@ return new class extends Migration
     {
         Schema::create('report_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->constrained()->onDelete('cascade');
-        
-        // Who sent it? 'admin' or 'whistleblower'
-        $table->string('sender_type'); 
-        
-        // If an admin sent it, which admin? (Nullable for whistleblower)
-        $table->foreignId('user_id')->nullable()->constrained();
-        
-        // The message content (we will encrypt this later)
-        $table->text('message');
+            $table->foreignId('report_id')->constrained()->cascadeOnDelete();
+    
+    // Identifies who sent it without needing a user_id
+    $table->enum('sender_type', ['admin', 'reporter']); 
+    $table->text('message'); // Will be encrypted via model cast
             $table->timestamps();
         });
     }
