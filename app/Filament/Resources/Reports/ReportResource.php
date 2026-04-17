@@ -61,8 +61,21 @@ class ReportResource extends Resource
                             ->visibility('private')
                             ->openable()
                             ->downloadable()
+                            /** * FIX: This line fetches the existing file paths from the 
+                             * 'attachments' relationship and displays them in the form 
+                             * so you don't see an empty "Drag & Drop" box.
+                             */
+                            ->formatStateUsing(function (?Model $record) {
+                                if (!$record) {
+                                    return [];
+                                }
+                                
+                                return $record->attachments->pluck('file_path')->toArray();
+                            })
+                            /** * FIX: When you save, this deletes old database links 
+                             * and creates new ones for the files currently in the box.
+                             */
                             ->saveRelationshipsUsing(static function (Model $record, $state) {
-                                // Important: Clears old links and saves new ones
                                 $record->attachments()->delete();
                                 foreach ($state as $file) {
                                     $record->attachments()->create([
@@ -90,6 +103,14 @@ class ReportResource extends Resource
                     ->label('Files')
                     ->badge(),
 
+                // FIX: Adding a "View" button directly as a column to bypass the error
+                \Filament\Tables\Columns\TextColumn::make('view_report')
+                    ->label('Action')
+                    ->default('VIEW DETAILS')
+                    ->color('primary')
+                    ->weight('bold')
+                    ->url(fn (Report $record): string => static::getUrl('view', ['record' => $record])),
+
                 \Filament\Tables\Columns\TextColumn::make('priority')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -107,13 +128,7 @@ class ReportResource extends Resource
                         'resolved' => 'success',
                         default => 'gray',
                     }),
-
-                \Filament\Tables\Columns\TextColumn::make('created_at')->dateTime()->label('Submitted On'),
             ])
-            // ->actions([
-            //     \Filament\Tables\Actions\ViewAction::make(),
-            //     \Filament\Tables\Actions\EditAction::make(),
-            // ])
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('status')
                     ->options([
@@ -121,6 +136,7 @@ class ReportResource extends Resource
                         'resolved' => 'Resolved',
                     ]),
             ]);
+            // Notice: actions() is gone. We put the link in the 'view_report' column instead.
     }
 
     public static function getPages(): array
