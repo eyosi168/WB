@@ -9,6 +9,7 @@ class Report extends Model
     // Removed tracking_id and passcode. Added bureau_id and category_id.
     protected $fillable = [
         'bureau_id',
+        'address',
         'category_id',
         'description',
         'status',

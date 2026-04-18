@@ -26,6 +26,9 @@ class ReportResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload(),
+                         \Filament\Forms\Components\TextInput::make('address')
+                         ->label('Incident Location / Address')
+                         ->maxLength(255),
                         
                         \Filament\Forms\Components\Select::make('category_id')
                             ->relationship('category', 'name')
@@ -96,6 +99,9 @@ class ReportResource extends Resource
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('id')->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('bureau.name')->label('Bureau')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('address')
+                ->label('Location')
+                ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 
                 \Filament\Tables\Columns\TextColumn::make('attachments_count')
