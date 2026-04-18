@@ -10,20 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('admin'); // or 'super-admin'
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('role')->default('admin'); // admin or super_admin
         $table->foreignId('bureau_id')->nullable()->constrained()->nullOnDelete();
-        });
-    }
+    });
+}
+
+public function down(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn('role');
+        $table->dropForeign(['bureau_id']);
+        $table->dropColumn('bureau_id');
+    });
+}
 };
