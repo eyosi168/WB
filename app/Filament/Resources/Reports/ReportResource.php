@@ -6,12 +6,13 @@ use App\Models\Report;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use BackedEnum;
+use Filament\Support\Icons\Heroicon;
 
 class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static string|null|BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 
     protected static ?string $recordTitleAttribute = 'id';
 

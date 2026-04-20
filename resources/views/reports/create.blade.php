@@ -23,6 +23,7 @@
 
     <div class="header-actions">
         <a href="{{ route('report.status.index') }}" class="status-btn">Check Report Status & Follow Ups &rarr;</a>
+        <!-- <a href="/status" class="status-btn">Check Report Status & Follow Ups &rarr;</a> -->
     </div>
 
     <div class="form-container">

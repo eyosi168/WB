@@ -20,7 +20,7 @@ class BureauResource extends Resource
 {
     protected static ?string $model = Bureau::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
     protected static ?string $recordTitleAttribute = 'name';
     public static function form(\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
