@@ -30,7 +30,6 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
 
-            // ✅ Custom login layout hooks (keep yours)
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
                 fn () => view('filament.auth.custom-layout-start')
@@ -40,13 +39,11 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.auth.custom-layout-end')
             )
 
-            // ✅ BRANDING (top-left logo)
             ->brandName('Ethio Telecom WhistleBlower')
             ->brandLogo(asset('images/logo.jpg')) // your logo in public/
             ->brandLogoHeight('5rem') // controls size (adjust if needed)
             ->favicon(asset('images/logo.jpg'))
 
-            // ✅ GREEN THEME (matches your login button)
             ->colors([
                 'primary' => [
                     50 => '#ecfdf5',
@@ -71,7 +68,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                AccountWidget::class,
+                // AccountWidget::class,
             ])
 
             ->middleware([
