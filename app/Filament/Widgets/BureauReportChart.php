@@ -25,7 +25,7 @@ protected function getData(): array
         'datasets' => [
             [
                 'data' => $data->values()->toArray(),
-                'backgroundColor' => ['#005a32', '#f7e400', '#ef4444', '#3b82f6', '#8b5cf6'],
+                'backgroundColor' => ['#8ec23c', '#f7e400', '#ef4444', '#3b82f6', '#8b5cf6'],
             ],
         ],
         'labels' => $data->keys()->toArray(),

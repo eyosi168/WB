@@ -31,8 +31,8 @@ class CategoryReportChart extends ChartWidget
                     'label' => 'Total Reports',
                     'data' => $data->values()->toArray(),
                     // Ethio Telecom Branding: Green with a Yellow border
-                    'backgroundColor' => '#005a32', 
-                    'borderColor' => '#f7e400',
+                    'backgroundColor' => '#8ec23c', 
+                    'borderColor' => '#048ed6',
                     'borderWidth' => 2,
                 ],
             ],

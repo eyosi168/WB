@@ -46,12 +46,12 @@ class AdminPanelProvider extends PanelProvider
 
             ->colors([
                 'primary' => [
-                    50 => '#ecfdf5',
+                    50 => '#8ec23c',
                     100 => '#d1fae5',
                     200 => '#a7f3d0',
                     300 => '#6ee7b7',
                     400 => '#34d399',
-                    500 => '#16a34a', // MAIN GREEN
+                    500 => '#8ec23c', // MAIN GREEN
                     600 => '#15803d',
                     700 => '#166534',
                     800 => '#14532d',
