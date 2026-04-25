@@ -38,7 +38,7 @@
                     <p class="text-gray-700 whitespace-pre-wrap">{{ $report->description }}</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-lg shadow border-2 border-dashed border-blue-300">
+                <!-- <div class="bg-white p-6 rounded-lg shadow border-2 border-dashed border-blue-300">
                     <h3 class="font-bold text-lg mb-4 text-blue-800">Follow-Up Messages (Coming Soon)</h3>
                     
                     <div class="bg-gray-50 p-4 rounded mb-4">
@@ -53,7 +53,9 @@
                             <button disabled class="bg-blue-300 text-white px-4 py-2 rounded cursor-not-allowed">Send Reply</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
+                <livewire:reporter-chat-box :report="$report" />
+
 
             </div>
         </div>
