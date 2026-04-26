@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Filament\Resources\Reports\RelationManagers;
+namespace App\Filament\Resources\ReportResource\RelationManagers;
 
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class MessagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'messages';
 
-    public function form(Schema $schema): Schema
+    protected static ?string $recordTitleAttribute = 'message';
+
+    public function form(Form $form): Form
     {
-        return $schema
-            ->components([
-                TextInput::make('message')
+        return $form
+            ->schema([
+                Forms\Components\Textarea::make('message')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(65535)
+                    ->columnSpanFull()
+                    ->placeholder('Type your question or update here...'),
+                
+                // Forces the sender_type to be 'admin' behind the scenes
+                Forms\Components\Hidden::make('sender_type')
+                    ->default('admin'),
             ]);
     }
 
@@ -35,26 +35,41 @@ class MessagesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('message')
             ->columns([
-                TextColumn::make('message')
+                Tables\Columns\TextColumn::make('sender_type')
+                    ->label('Sender')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'admin' => 'success',
+                        'reporter' => 'warning',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+                
+                Tables\Columns\TextColumn::make('message')
+                    ->wrap() // Prevents long messages from truncating
                     ->searchable(),
+                
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Sent At')
+                    ->dateTime('M d, Y h:i A')
+                    ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc') // Puts the newest messages at the top
             ->filters([
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
-                AssociateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('New Message')
+                    ->modalHeading('Send Message to Reporter')
+                    ->modalSubmitActionLabel('Send'),
             ])
-            ->recordActions([
-                EditAction::make(),
-                DissociateAction::make(),
-                DeleteAction::make(),
+            ->actions([
+                // Intentionally leaving out Edit and Delete actions. 
+                // In a whistleblower system, messages should be an immutable audit log.
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                    DeleteBulkAction::make(),
-                ]),
+            ->bulkActions([
+                //
             ]);
     }
 }
