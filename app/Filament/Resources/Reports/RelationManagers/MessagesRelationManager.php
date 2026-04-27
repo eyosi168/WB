@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\ReportResource\RelationManagers;
+namespace App\Filament\Resources\Reports\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+/**
+ * V5 CHANGE: The standard action location.
+ */
+use Filament\Actions\CreateAction; 
 
 class MessagesRelationManager extends RelationManager
 {
@@ -14,9 +18,9 @@ class MessagesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'message';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\Textarea::make('message')
                     ->required()
@@ -24,7 +28,6 @@ class MessagesRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->placeholder('Type your question or update here...'),
                 
-                // Forces the sender_type to be 'admin' behind the scenes
                 Forms\Components\Hidden::make('sender_type')
                     ->default('admin'),
             ]);
@@ -46,7 +49,7 @@ class MessagesRelationManager extends RelationManager
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
                 
                 Tables\Columns\TextColumn::make('message')
-                    ->wrap() // Prevents long messages from truncating
+                    ->wrap()
                     ->searchable(),
                 
                 Tables\Columns\TextColumn::make('created_at')
@@ -54,22 +57,17 @@ class MessagesRelationManager extends RelationManager
                     ->dateTime('M d, Y h:i A')
                     ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc') // Puts the newest messages at the top
-            ->filters([
-                //
-            ])
+            ->defaultSort('created_at', 'desc')
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                /**
+                 * In v5, we use CreateAction directly from Filament\Actions
+                 */
+                CreateAction::make()
                     ->label('New Message')
                     ->modalHeading('Send Message to Reporter')
                     ->modalSubmitActionLabel('Send'),
             ])
-            ->actions([
-                // Intentionally leaving out Edit and Delete actions. 
-                // In a whistleblower system, messages should be an immutable audit log.
-            ])
-            ->bulkActions([
-                //
-            ]);
+            ->actions([])
+            ->bulkActions([]);
     }
 }

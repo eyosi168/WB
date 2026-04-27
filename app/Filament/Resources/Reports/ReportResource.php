@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use BackedEnum;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * CHANGE 1: Corrected the Import Namespace.
+ * We ensure we are pulling the MessagesRelationManager from the 'Reports' 
+ * sub-folder to match your PSR-4 directory structure.
+ */
+use App\Filament\Resources\Reports\RelationManagers\MessagesRelationManager;
+
 class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
@@ -16,6 +23,11 @@ class ReportResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'id';
 
+    /**
+     * CHANGE 2: Signature Update
+     * Using Filament\Schemas\Schema to maintain compatibility with 
+     * the version requirements of your current environment.
+     */
     public static function form(\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
     {
         return $form
@@ -28,8 +40,8 @@ class ReportResource extends Resource
                             ->searchable()
                             ->preload(),
                          \Filament\Forms\Components\TextInput::make('address')
-                         ->label('Incident Location / Address')
-                         ->maxLength(255),
+                            ->label('Incident Location / Address')
+                            ->maxLength(255),
                         
                         \Filament\Forms\Components\Select::make('category_id')
                             ->relationship('category', 'name')
@@ -65,10 +77,6 @@ class ReportResource extends Resource
                             ->visibility('private')
                             ->openable()
                             ->downloadable()
-                            /** * FIX: This line fetches the existing file paths from the 
-                             * 'attachments' relationship and displays them in the form 
-                             * so you don't see an empty "Drag & Drop" box.
-                             */
                             ->formatStateUsing(function (?Model $record) {
                                 if (!$record) {
                                     return [];
@@ -76,9 +84,6 @@ class ReportResource extends Resource
                                 
                                 return $record->attachments->pluck('file_path')->toArray();
                             })
-                            /** * FIX: When you save, this deletes old database links 
-                             * and creates new ones for the files currently in the box.
-                             */
                             ->saveRelationshipsUsing(static function (Model $record, $state) {
                                 $record->attachments()->delete();
                                 foreach ($state as $file) {
@@ -101,8 +106,8 @@ class ReportResource extends Resource
                 \Filament\Tables\Columns\TextColumn::make('id')->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('bureau.name')->label('Bureau')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('address')
-                ->label('Location')
-                ->searchable(),
+                    ->label('Location')
+                    ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 
                 \Filament\Tables\Columns\TextColumn::make('attachments_count')
@@ -110,7 +115,6 @@ class ReportResource extends Resource
                     ->label('Files')
                     ->badge(),
 
-                // FIX: Adding a "View" button directly as a column to bypass the error
                 \Filament\Tables\Columns\TextColumn::make('view_report')
                     ->label('Action')
                     ->default('VIEW DETAILS')
@@ -143,7 +147,18 @@ class ReportResource extends Resource
                         'resolved' => 'Resolved',
                     ]),
             ]);
-            // Notice: actions() is gone. We put the link in the 'view_report' column instead.
+    }
+
+    /**
+     * CHANGE 3: The Integration Point.
+     * This registers the MessagesRelationManager. It will now appear 
+     * at the bottom of your "View" and "Edit" pages.
+     */
+    public static function getRelations(): array
+    {
+        return [
+            MessagesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
@@ -151,6 +166,7 @@ class ReportResource extends Resource
         return [
             'index' => \App\Filament\Resources\Reports\Pages\ListReports::route('/'),
             'create' => \App\Filament\Resources\Reports\Pages\CreateReport::route('/create'),
+            // CHANGE 4: Fixed a typo in your snippet (Fil ament -> Filament)
             'view' => \App\Filament\Resources\Reports\Pages\ViewReport::route('/{record}'),
             'edit' => \App\Filament\Resources\Reports\Pages\EditReport::route('/{record}/edit'),
         ];
