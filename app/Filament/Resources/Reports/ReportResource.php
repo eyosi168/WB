@@ -20,6 +20,7 @@ class ReportResource extends Resource
     protected static ?string $model = Report::class;
 
     protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedExclamationTriangle;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'id';
 

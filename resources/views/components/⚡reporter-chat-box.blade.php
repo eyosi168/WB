@@ -1,35 +1,46 @@
 <?php
 
-use Livewire\Component;
-use App\Models\Report;
-use App\Models\ReportMessage;
+namespace App\Livewire;
 
-new class extends Component
+use Livewire\Component;
+use Livewire\WithFileUploads; // ADD THIS
+use App\Models\Report;
+
+class ReporterChatBox extends Component
 {
-    // These must be public to be accessible in the Blade view
+    use WithFileUploads; // ENABLE FILE UPLOADS
+
     public Report $report;
     public string $newMessage = '';
+    public $attachment; // Variable to hold the file
 
-    // This runs when the component is first loaded
     public function mount(Report $report)
     {
         $this->report = $report;
     }
 
-    // Logic to save the message
     public function sendMessage()
     {
-        if (empty(trim($this->newMessage))) return;
+        // Require either a message OR an attachment
+        if (empty(trim($this->newMessage)) && !$this->attachment) return;
+
+        $path = null;
+        if ($this->attachment) {
+            // Store the file in the 'public/chat-attachments' folder
+            $path = $this->attachment->store('chat-attachments', 'public');
+        }
 
         $this->report->messages()->create([
             'sender_type' => 'reporter',
             'message' => $this->newMessage,
+            'attachment_path' => $path,
         ]);
 
-        $this->newMessage = ''; // Clear the textarea after sending
+        // Reset fields
+        $this->newMessage = '';
+        $this->attachment = null; 
     }
 
-    // This sends data to the Blade view every time it renders/polls
     public function with(): array
     {
         return [
@@ -38,30 +49,9 @@ new class extends Component
                 ->get(),
         ];
     }
-};
-?>
-
-<div wire:poll.15s class="bg-white p-6 rounded-lg shadow border-2 border-dashed border-blue-300">
-    <h3 class="font-bold text-lg mb-4 text-blue-800">Follow-Up Messages</h3>
     
-    <div class="space-y-4 mb-4 max-h-64 overflow-y-auto">
-        @foreach($messages as $msg)
-            <div class="p-4 rounded {{ $msg->sender_type === 'admin' ? 'bg-gray-50' : 'bg-blue-50 text-right' }}">
-                <p class="text-sm text-gray-500 font-bold mb-1">
-                    {{ ucfirst($msg->sender_type) }} - {{ $msg->created_at->diffForHumans() }}
-                </p>
-                <p>{{ $msg->message }}</p> 
-            </div>
-        @endforeach
-    </div>
-
-    <div class="mt-4 border-t pt-4">
-        <textarea wire:model="newMessage" class="w-full p-2 border rounded mb-2 bg-gray-100" rows="3" placeholder="Type your reply..."></textarea>
-        <div class="flex justify-between items-center">
-            <input type="file" class="text-sm text-gray-500">
-            <button wire:click="sendMessage" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Send Reply
-            </button>
-        </div>
-    </div>
-</div>
+    public function render()
+    {
+        return view('livewire.reporter-chat-box'); // Make sure this matches your blade file name
+    }
+}

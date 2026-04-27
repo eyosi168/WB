@@ -11,6 +11,7 @@ use App\Filament\Resources\Bureaus\Schemas\BureauInfolist;
 use App\Filament\Resources\Bureaus\Tables\BureausTable;
 use App\Models\Bureau;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -22,6 +23,7 @@ class BureauResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
+    protected static string|UnitEnum|null $navigationGroup = 'System Data';
     protected static ?string $recordTitleAttribute = 'name';
     public static function form(\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
     {
