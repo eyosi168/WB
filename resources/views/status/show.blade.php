@@ -15,12 +15,12 @@
     <div class="w-full shadow-md bg-white">
         <div class="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center">
 
-            <div class="flex items-center gap-5">
+            <div class="flex items-center gap-8 -ml-2">
 
                 <!-- PROPERLY BIGGER LOGO -->
                 <img src="{{ asset('images/logo.jpg') }}"
                      alt="Logo"
-                     class="h-10 w-auto object-contain">
+                     class="h-14 w-auto object-contain">
 
                 <h1 class="text-2xl font-bold text-[#048cd6] tracking-tight">
                     Secure Portal
