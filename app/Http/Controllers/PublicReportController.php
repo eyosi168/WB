@@ -16,6 +16,7 @@ class PublicReportController extends Controller
     public function create()
     {
         $categories = Category::all();
+        // We fetch all bureaus so the JavaScript can filter them without page refreshes
         $bureaus = Bureau::all();
 
         return view('reports.create', [
@@ -33,11 +34,10 @@ class PublicReportController extends Controller
             'address' => 'nullable|string|max:255',
             'description' => 'required|string',
             'passcode' => 'required|digits:6',
-            'evidence.*' => 'nullable|file|max:10240', // max 10MB per file
+            'evidence.*' => 'nullable|file|max:10240',
         ]);
 
         try {
-            // 2. Start Database Transaction
             DB::beginTransaction();
 
             // Create the main Report
@@ -50,20 +50,18 @@ class PublicReportController extends Controller
                 'priority' => 'normal',
             ]);
 
-            // 3. Generate Tracking ID and create Tracker
-            // Generates something like: WB-8F3A9C
+            // 3. Generate Tracking ID
             $trackingId = 'WB-' . strtoupper(Str::random(6)); 
             
             ReportTracker::create([
                 'report_id' => $report->id,
                 'tracking_id' => $trackingId,
-                'passcode' => $validated['passcode'], // Automatically hashed by the model cast
+                'passcode' => $validated['passcode'], 
             ]);
 
-            // 4. Handle MinIO Evidence Uploads
+            // 4. Handle Uploads
             if ($request->hasFile('evidence')) {
                 foreach ($request->file('evidence') as $file) {
-                    // Save to the 's3' disk (which you should configure for MinIO in .env)
                     $path = $file->store('attachments', 's3');
                     
                     ReportAttachment::create([
@@ -75,26 +73,20 @@ class PublicReportController extends Controller
                 }
             }
 
-            // Commit transaction if everything worked
             DB::commit();
-
-            // Redirect to success page with the Tracking ID
             return redirect()->route('report.success')->with('tracking_id', $trackingId);
 
         } catch (\Exception $e) {
-            // If anything fails (like MinIO being down), undo the database saves
             DB::rollBack();
-            return back()->with('error', 'Something went wrong submitting your report. Please try again.')->withInput();
+            return back()->with('error', 'Something went wrong. Please try again.')->withInput();
         }
     }
 
     public function success()
     {
-        // Prevent users from just navigating to /success without actually submitting
         if (!session('tracking_id')) {
             return redirect()->route('report.create');
         }
-
         return view('reports.success');
     }
 }

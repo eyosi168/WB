@@ -22,6 +22,7 @@ class BureauResource extends Resource
     protected static ?string $model = Bureau::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
+    protected static ?string $navigationLabel = 'Org'; // sidebar name
 
     protected static string|UnitEnum|null $navigationGroup = 'System Data';
     protected static ?string $recordTitleAttribute = 'name';
@@ -33,7 +34,25 @@ class BureauResource extends Resource
                     ->schema([
                         \Filament\Forms\Components\TextInput::make('name')
                             ->required()
-                            ->unique(ignoreRecord: true),
+                            ->maxLength(255),
+                            
+                        \Filament\Forms\Components\Select::make('level_type')
+                            ->label('Organizational Level')
+                            ->options([
+                                'Organization' => 'Organization',
+                                'Division' => 'Division',
+                                'Department' => 'Department',
+                                'Section' => 'Section',
+                            ])
+                            ->nullable(),
+
+                        \Filament\Forms\Components\Select::make('parent_id')
+                            ->label('Parent Bureau')
+                            ->relationship('parent', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->nullable()
+                            ->helperText('Leave blank if this is a top-level organization.'),
                     ]),
             ]);
     }
@@ -42,9 +61,25 @@ class BureauResource extends Resource
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('reports_count')->counts('reports')->label('Total Reports'),
-            ]);
+                \Filament\Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                    
+                \Filament\Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Parent')
+                    ->sortable()
+                    ->searchable(),
+                    
+                \Filament\Tables\Columns\TextColumn::make('level_type')
+                    ->label('Level')
+                    ->badge()
+                    ->sortable(),
+
+                \Filament\Tables\Columns\TextColumn::make('reports_count')
+                    ->counts('reports')
+                    ->label('Total Reports'),
+            ])
+            ->defaultSort('id', 'desc');
     }
 
 

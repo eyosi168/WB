@@ -14,7 +14,13 @@ return new class extends Migration
       
         Schema::create('bureaus', function (Blueprint $table) {
             $table->id();
+            // The self-referencing parent ID
+            $table->foreignId('parent_id')->nullable()->constrained('bureaus')->cascadeOnDelete();
+            
             $table->string('name');
+            // Optional: Helps identify if this is a Division, Department, etc.
+            $table->string('level_type')->nullable(); 
+            
             $table->timestamps();
         });
     }

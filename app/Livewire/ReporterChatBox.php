@@ -3,16 +3,22 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\WithFileUploads; // ADD THIS
+use Livewire\WithFileUploads;
 use App\Models\Report;
+use Illuminate\Support\Facades\Storage;
 
 class ReporterChatBox extends Component
 {
-    use WithFileUploads; // ENABLE FILE UPLOADS
+    use WithFileUploads;
 
     public Report $report;
     public string $newMessage = '';
-    public $attachment; // Variable to hold the file
+    public $attachment;
+
+    protected $rules = [
+        'newMessage' => 'nullable|string',
+        'attachment' => 'nullable|file|max:10240', // 10MB
+    ];
 
     public function mount(Report $report)
     {
@@ -21,13 +27,12 @@ class ReporterChatBox extends Component
 
     public function sendMessage()
     {
-        // Require either a message OR an attachment
         if (empty(trim($this->newMessage)) && !$this->attachment) return;
 
         $path = null;
         if ($this->attachment) {
-            // Store the file in the 'public/chat-attachments' folder
-            $path = $this->attachment->store('chat-attachments', 'public');
+            // Upload to MinIO
+            $path = $this->attachment->store('chat-attachments', 's3');
         }
 
         $this->report->messages()->create([
@@ -36,22 +41,15 @@ class ReporterChatBox extends Component
             'attachment_path' => $path,
         ]);
 
-        // Reset fields
-        $this->newMessage = '';
-        $this->attachment = null; 
+        $this->reset(['newMessage', 'attachment']);
     }
 
-    public function with(): array
+    public function render()
     {
-        return [
+        return view('livewire.reporter-chat-box', [
             'messages' => $this->report->messages()
                 ->orderBy('created_at', 'asc')
                 ->get(),
-        ];
-    }
-    
-    public function render()
-    {
-        return view('livewire.reporter-chat-box'); // Make sure this matches your blade file name
+        ]);
     }
 }
