@@ -52,12 +52,14 @@ class MessagesRelationManager extends RelationManager
                     ->wrap()
                     ->searchable(),
                     // Add this inside your $table->columns([]) array
-Tables\Columns\TextColumn::make('attachment_path')
-->label('Attachment')
-->formatStateUsing(fn ($state) => $state ? '📎 View File' : '-')
-->url(fn ($record) => $record->attachment_path ? asset('storage/' . $record->attachment_path) : null)
-->openUrlInNewTab()
-->color('primary'),
+                    Tables\Columns\TextColumn::make('attachment_path')
+                    ->label('Attachment')
+                    ->formatStateUsing(fn ($state) => $state ? '📎 View File' : '-')
+                    ->url(fn ($record) => $record->attachment_path 
+    ? url('/admin/evidence/' . $record->attachment_path) 
+    : null)
+                    ->openUrlInNewTab()
+                    ->color('primary'),
                 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Sent At')

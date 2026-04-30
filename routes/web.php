@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicReportController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\EvidenceController;
 
 // 1. Submit Report Routes
 Route::get('/report', [PublicReportController::class, 'create'])->name('report.create');
@@ -14,3 +15,6 @@ Route::get('/status', [StatusController::class, 'index'])->name('report.status.i
 Route::post('/status/auth', [StatusController::class, 'authenticate'])->name('report.status.auth');
 Route::get('/status/details', [StatusController::class, 'show'])->name('report.status.show');
 Route::post('/status/logout', [StatusController::class, 'logout'])->name('report.status.logout');
+Route::get('/admin/evidence/{path}', [EvidenceController::class, 'show'])
+    ->where('path', '.*')
+    ->middleware('auth');
