@@ -29,6 +29,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset() // Enables the "Forgot Password" logic
+        ->emailVerification() // Optional: if you want to require email validation
+        ->profile() // Enables the top-right profile menu to change passwords/names
+        // ... rest of your panel configuration
 
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
