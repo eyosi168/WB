@@ -161,6 +161,23 @@ class ReportResource extends Resource
             MessagesRelationManager::class,
         ];
     }
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+{
+    $query = parent::getEloquentQuery();
+    $user = auth()->user();
+
+    // 1. If they are a super_admin, let them see EVERYTHING.
+    if ($user->hasRole('super_admin')) {
+        return $query;
+    }
+
+    // 2. If they are a normal admin, find the categories assigned to them
+    // This relies on the Many-to-Many relationship we built earlier.
+    $assignedCategoryIds = $user->categories()->pluck('categories.id');
+
+    // 3. Filter the reports to ONLY show ones matching those category IDs
+    return $query->whereIn('category_id', $assignedCategoryIds);
+}
 
     public static function getPages(): array
     {
