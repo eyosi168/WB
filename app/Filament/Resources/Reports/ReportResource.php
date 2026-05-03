@@ -140,6 +140,12 @@ class ReportResource extends Resource
                         'resolved' => 'success',
                         default => 'gray',
                     }),
+                \Filament\Tables\Columns\TextColumn::make('investigator.name')
+                ->label('Investigator')
+                ->placeholder('Unclaimed')
+                ->badge()
+                ->color(fn ($state) => $state ? 'info' : 'gray') // Ethio Blue for active admins
+                ->searchable(),
             ])
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('status')
@@ -159,8 +165,10 @@ class ReportResource extends Resource
     {
         return [
             MessagesRelationManager::class,
+            RelationManagers\ActivitiesRelationManager::class,
         ];
     }
+   
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
 {
     $query = parent::getEloquentQuery();

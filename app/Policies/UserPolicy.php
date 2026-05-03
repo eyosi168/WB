@@ -27,7 +27,7 @@ public function create(User $user): bool
      */
     public function update(User $user, User $model): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -35,7 +35,7 @@ public function create(User $user): bool
      */
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -43,7 +43,7 @@ public function create(User $user): bool
      */
     public function restore(User $user, User $model): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -51,6 +51,6 @@ public function create(User $user): bool
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 }

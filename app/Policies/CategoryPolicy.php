@@ -29,7 +29,7 @@ public function create(User $user): bool
      */
     public function update(User $user, Category $category): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -37,7 +37,7 @@ public function create(User $user): bool
      */
     public function delete(User $user, Category $category): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -45,7 +45,7 @@ public function create(User $user): bool
      */
     public function restore(User $user, Category $category): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 
     /**
@@ -53,6 +53,6 @@ public function create(User $user): bool
      */
     public function forceDelete(User $user, Category $category): bool
     {
-        return false;
+        return $user->hasRole('super_admin');
     }
 }
